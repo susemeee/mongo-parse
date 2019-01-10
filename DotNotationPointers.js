@@ -41,11 +41,15 @@ function createPointers(rootObject, propertyParts) {
     })
 }
 
+function __getValueWithNegativeIndex(o, k) {
+    return (Array.isArray(o) && isInteger(k) && Number(k) < 0) ? o[(o.length - 1) + Number(k)] : o[k]
+}
+
 function getValue(object, key) {
     if(object === undefined)
         return undefined
     else
-        return object[key]
+        return __getValueWithNegativeIndex(object, key)
 }
 
 // an object that is passed a dot-syntax property path and can manipulate the value at that path
@@ -77,7 +81,7 @@ Object.defineProperty(DotNotationPointer.prototype, 'val', {
             return undefined
         } else {
             if(info.last !== undefined) {
-                return info.obj[info.last]
+                return __getValueWithNegativeIndex(info.obj, info.last)
             } else {
                 return info.obj
             }
@@ -93,7 +97,7 @@ Object.defineProperty(DotNotationPointer.prototype, 'val', {
           }
 
           this.propertyInfo.obj[this.propertyInfo.last] = value
-        }    
+        }
     }
 })
 
