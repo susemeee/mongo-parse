@@ -134,9 +134,11 @@ function partMatches(part, document, validate) {
         } else if(part.operator === '$size') {
             if (pointer.val instanceof Array) {
                 if (pointer.val.length === part.operand) return true
-                else if (part.operator in simpleComparators) {
-                    var test = valueTest(pointer.val, part.operand, simpleComparators[part.operator])
-                    if (test) return true
+                else if (typeof part.operand === 'object') {
+                    return Object.entries(part.operand).every(([operator, operand]) => {
+                        var test = valueTest(pointer.val.length, operand, simpleComparators[operator])
+                        if (test) return true                        
+                    })
                 }
                 else return false
             } else {
