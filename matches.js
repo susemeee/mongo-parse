@@ -132,8 +132,16 @@ function partMatches(part, document, validate) {
                     continue; // this part doesn't match
             }
         } else if(part.operator === '$size') {
-            return pointer.val instanceof Array && pointer.val.length === part.operand
-
+            if (pointer.val instanceof Array) {
+                if (pointer.val.length === part.operand) return true
+                else if (part.operator in simpleComparators) {
+                    var test = valueTest(pointer.val, part.operand, simpleComparators[part.operator])
+                    if (test) return true
+                }
+                else return false
+            } else {
+                return false
+            }
         } else if(part.operator === '$elemMatch') {
             var documentField = pointer.val
             if(documentField === undefined)
